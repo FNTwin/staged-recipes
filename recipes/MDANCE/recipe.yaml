@@ -1,0 +1,64 @@
+schema_version: 1
+
+context:
+  version: "0.4.0"
+  python_min: "3.8"
+
+package:
+  name: mdance
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/M/MDANCE/mdance-${{ version }}.tar.gz
+  sha256: 5b4fd6548e1ad4950ab81489a92c469cc935f0c1cdf67e88f053c05921a52702
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - prime_sim = mdance.cli.prime_sim:main
+      - prime_rep = mdance.cli.prime_rep:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools >=64
+    - versioneer
+    - wheel
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - numpy >=1.20.0
+    - scikit-learn >=0.24.0
+    - mdanalysis >=2.0.0
+    - shapegmmtorch >=2.0.0
+    - pytorch >=2.2.2
+
+tests:
+  - python:
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+      imports:
+        - mdance
+      pip_check: true
+  - requirements:
+      run:
+        - pip
+        - python ${{ python_min }}.*
+    script:
+      - prime_sim --help
+      - prime_rep --help
+
+about:
+  summary: a flexible n-ary clustering package for all applications.
+  license: MIT
+  license_file: LICENSE
+  homepage: https://github.com/mqcomplab/MDANCE
+  documentation: https://mdance.readthedocs.io/en/latest/
+
+extra:
+  recipe-maintainers:
+    - FNTwin
